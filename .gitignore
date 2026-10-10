@@ -1,0 +1,12 @@
+node_modules/
+.next/
+.cache/
+.env*
+!.env.example
+*.log
+*.tsbuildinfo
+*.zip
+.DS_Store
+Thumbs.db
+AGENTS.md
+CLAUDE.md

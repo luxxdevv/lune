@@ -1,0 +1,53 @@
+{
+  "serverName": "Lune SMP",
+  "description": "Custom traits and abilities, forged under the moonlight.",
+  "serverAddress": "lunesmp.xyz",
+  "bedrockAddress": "lunesmp.xyz",
+  "bedrockPort": 25571,
+  "bedrockPrefix": ".",
+  "storeUrl": "https://store.lunesmp.xyz",
+  "websiteUrl": "https://lunesmp.xyz/server",
+  "discordUrl": "https://discord.gg/lunesmp",
+  "discordServerId": "1557177689280876544",
+  "wikiUrl": "/server#faq",
+  "legalNoticeUrl": "/information",
+  "privacyUrl": "/information#privacy",
+  "termsUrl": "/information#terms",
+  "withdrawalUrl": "/information#withdrawal",
+  "supportEmail": "",
+  "currency": "USD",
+  "logo": "/assets/logo/server.svg",
+  "background": "/assets/sky.png",
+  "loginSkin": "",
+  "showcaseName": "Lune SMP",
+  "featuredPackageId": 0,
+  "hiddenPackageIds": [],
+  "productArtwork": "theme",
+  "community": {
+    "enabled": true,
+    "goal": 500,
+    "timeZone": "Europe/Berlin"
+  },
+  "promotion": {
+    "enabled": false,
+    "code": "WELCOME",
+    "percent": 10
+  },
+  "aboutTitle": "Your next adventure begins at moonrise.",
+  "version": "1.21.11+",
+  "staff": [],
+  "faq": [
+    [
+      "How do I join?",
+      "Press the Play now button to copy the server address, then add it in Minecraft multiplayer and step into the night."
+    ],
+    [
+      "How do I receive a purchase?",
+      "Enter the correct Minecraft username at checkout, then join the server after payment. If anything is missing, contact support with your transaction ID and we'll sort it out."
+    ],
+    [
+      "Where can I get help?",
+      "Join our Discord community and open a support ticket. Our staff are around whenever the moon is up."
+    ]
+  ]
+}

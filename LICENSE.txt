@@ -1,0 +1,9 @@
+The original template source and original demo artwork are supplied under the
+purchase licence selected by the seller on the BuiltByBit resource page.
+Refer to that listing and your order for the scope of permitted use and support.
+This file does not replace the purchase terms or grant additional resale rights.
+
+Third-party libraries and fonts retain their respective licences, described in
+THIRD-PARTY-NOTICES.md and their supplied licence files. Minecraft, Mojang,
+Microsoft, Discord and Tebex names belong to their respective owners. This
+template is not an official product of, or endorsed by, those companies.

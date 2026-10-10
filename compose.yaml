@@ -1,0 +1,14 @@
+services:
+  website:
+    build: .
+    restart: unless-stopped
+    env_file: .env.local
+    environment:
+      HOST: 0.0.0.0
+      PORT: 3100
+    ports:
+      - "127.0.0.1:3100:3100"
+    volumes:
+      - avatar-cache:/app/.cache
+volumes:
+  avatar-cache:

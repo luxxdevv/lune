@@ -1,0 +1,156 @@
+# Setup — from download to your own store
+
+## 1. Open the demo
+
+Install **Node.js 24** from https://nodejs.org. Restart your terminal after installing it. Extract the ZIP to a normal folder where you can write files.
+
+**Windows:** double-click `START-WINDOWS.cmd`.
+
+**macOS / Linux:** open a terminal in the extracted folder and run:
+
+```sh
+sh start-here.sh
+```
+
+The launcher installs dependencies, asks for your public server details and starts the preview. The first installation needs an internet connection and may take several minutes. You can press Enter at every question to keep demo settings.
+
+Open http://localhost:3100. The server website is at http://localhost:3100/server. These addresses work on the computer running the app. Keep the terminal open; Ctrl+C stops it.
+
+If you prefer doing each step yourself:
+
+```sh
+npm ci
+npm run setup
+npm run dev
+```
+
+The setup wizard creates `.env.local` with a new random `SESSION_SECRET`. It preserves existing credentials and settings; if the session secret is absent or blank, it fills just that field. The download contains **no seller credentials**.
+
+## 2. Make it yours
+
+Open `site.config.json` in a text editor. Keep the JSON quotation marks and commas intact.
+
+- `serverName`: your public name.
+- `serverAddress`: the Minecraft Java address, without `https://`.
+- `bedrockAddress`, `bedrockPort`, `bedrockPrefix`: match your Bedrock/Geyser setup. The default prefix is a dot; use the prefix your server actually assigns.
+- `description`, `aboutTitle`, `version`: text on the server website.
+- `storeUrl`: the full store URL, such as `https://store.example.com`.
+- `websiteUrl`: defaults to the same site's `/server` page. An existing server website can be used instead.
+- `discordUrl`: your invite link. `discordServerId` is optional; Discord's Server Widget must be enabled for its online count.
+- `currency`: match the base currency of your Tebex account.
+- `logo` and `background`: public paths to your uploaded files. `/assets/logo/my-logo.png` means the file is `public/assets/logo/my-logo.png`.
+- `loginSkin`: optional public path to your own 64×64 PNG Minecraft skin, such as `/assets/skins/my-skin.png`. Empty uses the bundled original demo character. Do not enter a Minecraft username in this field.
+- `showcaseName`: placeholder name before a real top customer is available.
+- `community.goal`: monthly target, e.g. `500`. `community.timeZone` controls the calendar-month reset, e.g. `Europe/Berlin`, `America/New_York` or `UTC`. `community.enabled: false` hides the goal.
+- `featuredPackageId`: your Tebex package ID. `0` selects an available package automatically.
+- `hiddenPackageIds`: an array of package IDs to hide, e.g. `[12345, 67890]`.
+- `productArtwork`: `"theme"` for the built-in 3D art or `"tebex"` for your uploaded package images.
+- `promotion`: disabled initially. Only enable it after creating the matching coupon in Tebex. Changing the display settings does not create a coupon.
+- `staff`: add entries such as `{ "name": "Alex", "role": "Owner", "mc": "YourMinecraftName" }`.
+- `faq`: pairs of questions and answers.
+
+The supplied SVG logo can be edited in a vector editor or replaced with your own transparent PNG/SVG. Updating the server name does not redraw the logo artwork.
+
+News lives in `public/news.json`. Each post needs `date` (`YYYY-MM-DD`), `tag`, `title` and `body`. Newest dates appear first.
+
+Put CSS changes in `src/app/theme.css`; it loads last. Do not put API keys in public configuration or in `public/`.
+
+## 3. Connect your Tebex store
+
+You need your own Tebex account with Headless access. Follow [Tebex's Headless documentation](https://docs.tebex.io/developers/headless-api) to obtain the store's **public token and private key**. These are different from the key entered into your Minecraft server plugin.
+
+Open the generated `.env.local`. Set these values locally; leave the generated session secret in place:
+
+```dotenv
+TEBEX_PUBLIC_TOKEN=your_own_headless_public_token
+TEBEX_PRIVATE_KEY=your_own_headless_private_key
+STORE_URL=https://store.example.com
+```
+
+Use the same URL in `site.config.json` → `storeUrl`. Do not include a trailing slash. For a local preview, keep `http://localhost:3100` in both files. The live site must use HTTPS.
+
+Create categories and packages in Tebex and configure their delivery commands for your own game server. The template reads actual package IDs and prices from your account. Check your descriptions, billing schedules, quantities and tax/region settings in Tebex.
+
+The buyer selects Java or Bedrock and enters the receiving account. If Tebex requires account authentication, the template follows its authentication link before checkout. Payments occur on Tebex's hosted checkout; card details are not collected by this site.
+
+Restart the server after changing environment variables. Run:
+
+```sh
+npm run doctor
+```
+
+This checks required values without showing them. It does not create purchases or verify ownership of an account.
+
+### Optional sidebar features
+
+Configure **Top Customer** and **Recent Payments** under your Tebex webstore's Sidebar settings. The template displays their public names and package names. The skin showcase is a placeholder until real customer data exists.
+
+For **gift-card balances and the community goal**, set:
+
+```dotenv
+TEBEX_PLUGIN_SECRET=your_own_tebex_game_server_secret
+```
+
+Use a game-server key from the same Tebex account. The balance checker looks up existing cards; it does not create or redeem them. Manage issued cards in Tebex. The monthly goal totals completed purchases from the Tebex payments API and refreshes periodically; it excludes refunds, chargebacks, pending payments and manual/test grants. Its calendar month follows `community.timeZone`. The goal does not trigger game rewards; use Tebex's own goal features if you need rewards.
+
+The goal currency must match returned payment currencies. Unavailable or inconsistent data displays an unavailable state, not fabricated progress. Currency conversion elsewhere is for display; Tebex shows the final payable amount.
+
+Without optional credentials, the rest of the store still works. Those widgets show unavailable states instead of fake balances. No database is required for the template.
+
+## 4. Publish the website
+
+Use a host supporting **Node.js 24 / Next.js**, or a VPS with Docker. This ZIP cannot be uploaded as a Tebex Twig theme or run as static HTML. Background build, Node process and HTTPS/domain configuration depend on your host.
+
+### A. Node.js hosting
+
+1. Upload the project files, including `site.config.json` and `public/`. Exclude local `node_modules`, `.next`, `.cache` and logs.
+2. Configure your private environment variables in the hosting dashboard, or create `.env.local` on the server. Never publish it in a repository.
+3. Set `STORE_URL` and `storeUrl` to the final HTTPS domain. Set `websiteUrl` to your domain's `/server` path if using the included server website.
+4. Set the install command to `npm ci`, build command to `npm run build`, and start command to `npm start`.
+5. The app uses your host's `PORT` environment variable or port `3100`. It binds to `HOST` or `0.0.0.0` in production.
+6. Configure the domain and HTTPS certificate using your host's instructions.
+7. For checkout, set `TRUSTED_IP_HEADER` to the client-IP header **overwritten by your host's trusted proxy**, e.g. `x-real-ip` for the supplied Nginx example. Do not expose the Node port publicly behind this proxy. If your managed host uses another header, confirm its documented value.
+
+For a private local production check:
+
+```sh
+npm run build
+npm start
+```
+
+### B. Docker on a VPS
+
+Install Docker and its Compose plugin. Configure `site.config.json` and `.env.local` first, then run:
+
+```sh
+docker compose up -d --build
+docker compose logs -f website
+```
+
+The included Compose file publishes the app on `127.0.0.1:3100` for a local reverse proxy. It is not directly exposed to the internet. `deploy/nginx.example.conf` shows an HTTPS proxy that sets the required client-IP header. Replace its hostname and certificate paths with your real domain and installed TLS certificate. Your host or system administrator must provision DNS, Nginx and the certificate; the example does not install them automatically.
+
+Credentials are passed to the container at runtime; `.dockerignore` keeps environment files out of the image. For public configuration changes, rebuild with `docker compose up -d --build`.
+
+### Before accepting payments
+
+Replace the starter information page or point the legal links at your actual business policies. Add your contact information, delivery details and applicable purchase/refund/privacy terms. Check real package descriptions, a Java/Bedrock account as applicable, login redirection, the basket and Tebex's final checkout screen.
+
+## 5. Common fixes
+
+| Problem | Fix |
+| --- | --- |
+| `node` or `npm` is not recognized | Install Node.js 24 and reopen the terminal. |
+| Windows blocks `npm.ps1` | Use the supplied CMD launcher or run `npm.cmd` in PowerShell. You do not need to change system execution policy. |
+| “Port already in use” | Stop the other preview terminal. Or change `PORT`, `STORE_URL` and `storeUrl` together. |
+| Empty or missing products | Check Headless credentials and category/package visibility in Tebex. Verify the account is the intended store. |
+| Package says “Options required” | This release does not supply forms for custom Tebex variables. Remove that requirement or extend the template before selling that package. |
+| Checkout origin/session error | Match both store URLs exactly; keep a stable session secret and restart. Use the correct HTTPS hostname. |
+| Checkout network-address error | Configure the trusted proxy IP header. See hosting step 7. |
+| Goal or gift-card checker unavailable | Check the optional Plugin API secret belongs to the same store. Run `npm run doctor`; verify Tebex availability. |
+| Discord count unavailable | Set the correct guild ID and enable its Server Widget. The invite still works. |
+| Skin unavailable | Check the username or the local PNG skin path. Mojang/Geyser may temporarily limit lookups; fallback art is supplied. |
+| Changed settings but live site looks unchanged | Run `npm run build`, restart, then refresh the browser. |
+
+For help, send the seller your Node version, hosting type and error text. Remove credentials before sharing any files.
+
+Official references: [Tebex Headless API](https://docs.tebex.io/developers/headless-api), [Tebex Plugin API](https://docs.tebex.io/plugin), [Next.js deployment](https://nextjs.org/docs/app/guides/deploying-to-platforms).
