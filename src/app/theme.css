@@ -1,0 +1,7 @@
+/* Lune SMP moon theme. Loaded after the template styles.
+   The other CSS files were recoloured from blue to neutral charcoal and silver,
+   so only a few custom rules live here. */
+:root { --accent:#8d9199; --panel-outline:#565960; }
+.demo-notice { margin:0 165px 22px 0; padding:9px 12px; font-size:11px; line-height:1.7; border:1px solid #4a4e57; border-radius:6px; color:#c4c8d0; background:#1d1e22; }
+.comparison-table td { max-width:300px; white-space:normal; font-size:13px; }
+@media(max-width:650px) { .demo-notice { margin:0 0 18px; } }
