@@ -1,0 +1,11 @@
+import { spawn } from 'node:child_process';
+import { existsSync } from 'node:fs';
+if (existsSync('.env.local')) process.loadEnvFile('.env.local');
+const mode=process.argv[2]==='start'?'start':'dev';
+const port=process.env.PORT||'3100';
+if (!/^\d+$/.test(port)||Number(port)<1||Number(port)>65535) throw new Error('PORT must be a valid port number.');
+const args=['node_modules/next/dist/bin/next',mode,'--hostname',mode==='dev'?'127.0.0.1':process.env.HOST||'0.0.0.0','--port',port];
+if(mode==='dev')args.push('--webpack');
+const child=spawn(process.execPath,args,{stdio:'inherit',env:{...process.env,NEXT_TELEMETRY_DISABLED:'1'}});
+child.on('exit',code=>process.exit(code??1));
+for(const signal of ['SIGINT','SIGTERM'])process.on(signal,()=>child.kill(signal));
